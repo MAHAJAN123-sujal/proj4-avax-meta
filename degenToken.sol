@@ -2,12 +2,11 @@
 pragma solidity ^0.8.20;
 
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC20/ERC20.sol";
-import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol";
 
-contract DeGame is ERC20 {
+contract DegenGame is ERC20 {
     
-    string private constant tokenName = "Degen";
-    string private constant Symbol = "DGN";
+    string private tokenName = "Degen";
+    string private Symbol = "DGN";
 
     struct item{
         uint id;
@@ -15,7 +14,7 @@ contract DeGame is ERC20 {
         uint price;
     }
 
-    uint itemCount = 0;
+    uint itemNum = 0;
     mapping (uint => item) items;
     mapping (address => item[]) redeemedItem;
     address public owner;
@@ -57,27 +56,27 @@ contract DeGame is ERC20 {
         return true;
     }
 
-    function listItem (string memory itemName, uint price) public onlyOwner{
-        itemCount ++ ;
-        items[itemCount] = item(itemCount, itemName, price);
+    function AddNewItem (string memory itemName, uint price) public onlyOwner{
+        itemNum ++ ;
+        items[itemNum] = item(itemNum, itemName, price);
     }
 
-    function displayItems() public view returns (item[] memory) {
-        item[] memory temp = new item[](itemCount);
-        for (uint i = 1; i <= itemCount; i++) {
+    function displayAllItems() public view returns (item[] memory) {
+        item[] memory temp = new item[](itemNum);
+        for (uint i = 1; i <= itemNum; i++) {
             temp[i - 1] = items[i];
         }
         return temp;
     }
 
-    function redeem (uint id) public {
-        require(id<=itemCount, "item doesn't exist");
+    function redeemNewItem(uint id) public {
+        require(id<=itemNum, "item doesn't exist");
         require(items[id].price <= balanceOf(msg.sender), "You don't have enough tokens.");
         _transfer(msg.sender,owner, items[id].price);
         redeemedItem[msg.sender].push(items[id]);
     }
 
-    function showRedeemedItem() public view returns(item[] memory){
+    function redeemedItems() public view returns(item[] memory){
         return redeemedItem[msg.sender];
     }
 }
